@@ -1,7 +1,10 @@
 package com.evento.organizacao.evento.controller;
 
+import com.evento.organizacao.evento.dto.request.EventoRequest;
+import com.evento.organizacao.evento.dto.response.EventoResponse;
 import com.evento.organizacao.evento.entity.Evento;
 import com.evento.organizacao.evento.service.EventoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +27,11 @@ public class EventoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> criar(@RequestBody Evento evento) {
-        try {
-            Evento novoEvento = eventoService.salvar(evento);
-            return ResponseEntity.status(HttpStatus.CREATED).body(novoEvento);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<EventoResponse> criar(@Valid @RequestBody EventoRequest request) {
+        Evento novoEvento = request.paraEntidade();
+        Evento eventoSalvo = eventoService.salvar(novoEvento);
+        EventoResponse response = EventoResponse.daEntidade(eventoSalvo, 0);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{id}")

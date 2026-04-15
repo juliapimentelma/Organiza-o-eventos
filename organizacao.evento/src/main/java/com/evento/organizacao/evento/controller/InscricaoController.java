@@ -1,7 +1,10 @@
 package com.evento.organizacao.evento.controller;
 
+import com.evento.organizacao.evento.dto.request.InscricaoRequest;
+import com.evento.organizacao.evento.dto.response.InscricaoResponse;
 import com.evento.organizacao.evento.entity.Inscricao;
 import com.evento.organizacao.evento.service.InscricaoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +23,10 @@ public class InscricaoController {
     public record NovaInscricaoRequest(String usuarioId, String eventoId) {}
 
     @PostMapping
-    public ResponseEntity<Inscricao> realizarInscricao(@RequestBody NovaInscricaoRequest request) {
-        Inscricao inscricao = inscricaoService.realizarInscricao(request.usuarioId(), request.eventoId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(inscricao);
+    public ResponseEntity<InscricaoResponse> realizarInscricao(@Valid @RequestBody InscricaoRequest request) {
+        Inscricao inscricaoSalva = inscricaoService.realizarInscricao(request.usuarioId(), request.eventoId());
+        InscricaoResponse response = InscricaoResponse.daEntidade(inscricaoSalva);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/usuario/{usuarioId}")
