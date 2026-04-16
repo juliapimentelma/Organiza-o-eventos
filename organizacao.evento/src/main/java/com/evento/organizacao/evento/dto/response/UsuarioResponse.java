@@ -14,7 +14,7 @@ public record UsuarioResponse(
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getEmail(),
-                usuario.getRole().name() // Convertendo o Enum para String para o Angular
+                usuario.getRole().name()
         );
     }
 }

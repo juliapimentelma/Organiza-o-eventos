@@ -28,9 +28,7 @@ public class EventoController {
 
     @PostMapping
     public ResponseEntity<EventoResponse> criar(@Valid @RequestBody EventoRequest request) {
-        Evento novoEvento = request.paraEntidade();
-        Evento eventoSalvo = eventoService.salvar(novoEvento);
-        EventoResponse response = EventoResponse.daEntidade(eventoSalvo, 0);
+        EventoResponse response = eventoService.salvar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -42,12 +40,8 @@ public class EventoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletar(@PathVariable String id) {
-        try {
-            eventoService.deletar(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> deletar(@PathVariable String id) {
+        eventoService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,9 @@
 package com.evento.organizacao.evento.service;
 
+import com.evento.organizacao.evento.dto.request.EventoRequest;
+import com.evento.organizacao.evento.dto.response.EventoResponse;
 import com.evento.organizacao.evento.entity.Evento;
+import com.evento.organizacao.evento.mapper.EventoMapper;
 import com.evento.organizacao.evento.repository.EventoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +18,15 @@ public class EventoService {
     @Autowired
     private EventoRepository eventoRepository;
 
+    @Autowired
+    private EventoMapper eventoMapper;
+
     public List<Evento> listarTodos() {
         return eventoRepository.findAll();
     }
 
-    public Evento salvar(Evento evento) {
+    public EventoResponse salvar(EventoRequest request) {
+        Evento evento = eventoMapper.toEntity(request);
         if (evento.getDataHora() != null && evento.getDataHora().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("A data do evento não pode ser no passado.");
         }
@@ -27,8 +34,8 @@ public class EventoService {
         if (evento.getCapacidadeMaxima() != null && evento.getCapacidadeMaxima() <= 0) {
             throw new IllegalArgumentException("A capacidade deve ser maior que zero.");
         }
-
-        return eventoRepository.save(evento);
+        Evento eventoSalvo = eventoRepository.save(evento);
+        return eventoMapper.toResponse(eventoSalvo);
     }
 
     public Optional<Evento> buscarPorId(String id) {
